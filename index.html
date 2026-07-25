@@ -196,6 +196,63 @@
   .passage-box span.done{ color:var(--good); }
   .passage-box span.current{ color:#fff; background:var(--cobalt); }
 
+  .diff-tag{
+    display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.05em;
+    padding:2px 8px; border-radius:999px; margin-top:6px;
+  }
+  .diff-tag.basic{ background:#e8f3ec; color:var(--good); }
+  .diff-tag.hard{ background:#fbeceb; color:var(--seal); }
+
+  .challenge-bar{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    background:var(--porcelain); border:1px solid var(--line); border-radius:16px; padding:16px 22px; margin-bottom:22px;
+  }
+  .challenge-bar p{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+  .challenge-bar strong{ color:var(--cobalt-deep); }
+  .timer-pill{
+    font-family:"Noto Serif TC",serif; font-weight:700; font-size:15px; color:var(--seal);
+    background:#fbeceb; border-radius:999px; padding:6px 16px; display:none; align-items:center; gap:6px;
+  }
+  .timer-pill.show{ display:inline-flex; }
+
+  .result-panel{ display:none; margin-top:22px; text-align:center; }
+  .result-panel.show{ display:block; }
+  .result-panel h3{ margin:0 0 6px; color:var(--cobalt-deep); font-size:22px;}
+  .result-panel p{ color:var(--ink-soft); font-size:14px; margin:0 0 16px;}
+  .name-form{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap;}
+  .name-form input{
+    padding:10px 14px; border:1px solid var(--line); border-radius:10px; font-family:"Noto Sans TC",sans-serif;
+    font-size:14px; width:180px; outline:none;
+  }
+  .name-form input:focus{ border-color:var(--cobalt); }
+
+  .board-card{ margin-top:26px; }
+  .board-list{ list-style:none; margin:16px 0 0; padding:0; counter-reset:rank; }
+  .board-list li{
+    counter-increment:rank; display:flex; align-items:center; gap:12px;
+    padding:10px 6px; border-bottom:1px solid var(--line); font-size:14.5px;
+  }
+  .board-list li:last-child{ border-bottom:none; }
+  .board-list li::before{
+    content:counter(rank); width:24px;height:24px; border-radius:50%; background:var(--paper-dim);
+    color:var(--cobalt-deep); font-weight:700; font-size:12px; display:grid; place-items:center; flex-shrink:0;
+    font-family:"Noto Serif TC",serif;
+  }
+  .board-list li:nth-child(1)::before{ background:var(--gold); color:#fff; }
+  .board-name{ flex:1; font-weight:600; color:var(--ink); }
+  .board-score{ font-family:"Noto Serif TC",serif; font-weight:700; color:var(--cobalt); }
+  .board-empty{ color:var(--ink-soft); font-size:13.5px; text-align:center; padding:14px 0;}
+
+  .ime-note{
+    background:#fff7e6; border:1px solid #ecd9a6; color:#7a5a12; border-radius:12px;
+    padding:14px 18px; font-size:13.5px; text-align:left; margin:0 auto 22px; max-width:640px;
+  }
+  .ime-note b{ color:var(--seal); }
+  .ime-warn{
+    display:none; color:var(--seal); font-size:13px; font-weight:700; margin:-8px 0 14px;
+  }
+  .ime-warn.show{ display:block; }
+
   .type-input-wrap{ display:flex; justify-content:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
   #typeInput{
     font-family:"Noto Serif TC",serif;
@@ -281,6 +338,12 @@
       </div>
     </div>
 
+    <div class="card" style="margin-bottom:26px;">
+      <div class="ime-note" style="margin:0; max-width:none;">
+        ⌨️ <b>使用須知</b>:打字練習需要打出「羅馬拼音字母」(如 ma1),請先把輸入法切換成「英文/半形」模式。如果使用微軟拼音等中文輸入法,你打的字會被直接轉換成漢字,無法正確判斷對錯。
+      </div>
+    </div>
+
     <div class="card">
       <div class="section-head">
         <div class="eyebrow">學習地圖</div>
@@ -360,7 +423,19 @@
       <p>選擇一個關卡,系統會念出或顯示提示,請在輸入框打出對應的拼音(聲調請用數字 1-4 表示,例如 mā 請打 ma1)。</p>
     </div>
 
+    <div class="ime-note">
+      ⌨️ <b>打字前請先切換成「英文/半形」輸入模式</b>:這裡要練習的是打出羅馬拼音字母(如 ma1),如果你的微軟拼音等中文輸入法還開著,打出來的字會被直接轉換成漢字,系統就會判斷成打錯。切到英文模式後再開始練習即可。
+    </div>
+
     <div class="level-row" id="levelRow"></div>
+
+    <div class="challenge-bar">
+      <p>選好關卡後,可切換成 <strong>60 秒計時挑戰</strong>,看看能在時間內答對幾題!</p>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="timer-pill" id="timerPill">⏱ <span id="timerNum">60</span> 秒</span>
+        <button class="btn btn-ghost" id="btnChallenge" style="background:var(--cobalt); color:#fff;" onclick="startChallenge()">⏱ 開始 60 秒計時挑戰</button>
+      </div>
+    </div>
 
     <div class="type-stage">
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -377,6 +452,7 @@
       <div class="type-input-wrap">
         <input id="typeInput" type="text" autocomplete="off" placeholder="在這裡打字…" disabled>
       </div>
+      <div class="ime-warn" id="imeWarn">⚠️ 偵測到中文輸入,請先把輸入法切換成英文/半形模式再輸入拼音字母</div>
       <div class="feedback" id="typeFeedback"></div>
 
       <div class="type-controls">
@@ -384,6 +460,21 @@
         <button class="icon-btn" id="btnHint" onclick="toggleHint()">💡 顯示提示</button>
         <button class="icon-btn" id="btnSkip" onclick="skipQuestion()">⏭ 跳過</button>
       </div>
+
+      <div class="result-panel" id="resultPanel">
+        <h3>⏱ 時間到!</h3>
+        <p id="resultSummary"></p>
+        <div class="name-form">
+          <input id="nameInput" type="text" maxlength="12" placeholder="輸入你的名字">
+          <button class="btn btn-primary" onclick="submitScore()">加入排行榜</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card board-card">
+      <div class="group-label">🏆 本次排行榜(僅保留本次瀏覽期間的紀錄)</div>
+      <ul class="board-list" id="boardList"></ul>
+      <div class="board-empty" id="boardEmpty">還沒有人挑戰過,快來搶頭香!</div>
     </div>
   </section>
 
@@ -547,38 +638,124 @@ const levels = [
   }
 ];
 
-/* 情境短文(約100字)— 依序打字練習用 */
-const passageData = [
-  {hz:'我',py:'wo3'},{hz:'家',py:'jia1'},{hz:'有',py:'you3'},{hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},
-  {hz:'、',py:''},{hz:'媽',py:'ma1'},{hz:'媽',py:'ma1'},{hz:'、',py:''},{hz:'哥',py:'ge1'},{hz:'哥',py:'ge1'},
-  {hz:'和',py:'he2'},{hz:'我',py:'wo3'},{hz:'，',py:''},{hz:'一',py:'yi1'},{hz:'共',py:'gong4'},{hz:'四',py:'si4'},
-  {hz:'個',py:'ge4'},{hz:'人',py:'ren2'},{hz:'。',py:''},
-  {hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},{hz:'每',py:'mei3'},{hz:'天',py:'tian1'},{hz:'早',py:'zao3'},{hz:'上',py:'shang4'},
-  {hz:'去',py:'qu4'},{hz:'上',py:'shang4'},{hz:'班',py:'ban1'},{hz:'，',py:''},
-  {hz:'媽',py:'ma1'},{hz:'媽',py:'ma1'},{hz:'在',py:'zai4'},{hz:'家',py:'jia1'},{hz:'煮',py:'zhu3'},{hz:'飯',py:'fan4'},{hz:'，',py:''},
-  {hz:'哥',py:'ge1'},{hz:'哥',py:'ge1'},{hz:'去',py:'qu4'},{hz:'學',py:'xue2'},{hz:'校',py:'xiao4'},{hz:'上',py:'shang4'},{hz:'課',py:'ke4'},{hz:'，',py:''},
-  {hz:'我',py:'wo3'},{hz:'也',py:'ye3'},{hz:'是',py:'shi4'},{hz:'學',py:'xue2'},{hz:'生',py:'sheng1'},{hz:'，',py:''},
-  {hz:'喜',py:'xi3'},{hz:'歡',py:'huan1'},{hz:'看',py:'kan4'},{hz:'書',py:'shu1'},{hz:'和',py:'he2'},{hz:'運',py:'yun4'},{hz:'動',py:'dong4'},{hz:'。',py:''},
-  {hz:'星',py:'xing1'},{hz:'期',py:'qi1'},{hz:'六',py:'liu4'},{hz:'，',py:''},
-  {hz:'我',py:'wo3'},{hz:'們',py:'men5'},{hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'去',py:'qu4'},{hz:'公',py:'gong1'},{hz:'園',py:'yuan2'},{hz:'散',py:'san4'},{hz:'步',py:'bu4'},{hz:'，',py:''},
-  {hz:'天',py:'tian1'},{hz:'氣',py:'qi4'},{hz:'很',py:'hen3'},{hz:'好',py:'hao3'},{hz:'，',py:''},
-  {hz:'大',py:'da4'},{hz:'家',py:'jia1'},{hz:'都',py:'dou1'},{hz:'很',py:'hen3'},{hz:'開',py:'kai1'},{hz:'心',py:'xin1'},{hz:'。',py:''},
-  {hz:'晚',py:'wan3'},{hz:'上',py:'shang4'},{hz:'全',py:'quan2'},{hz:'家',py:'jia1'},{hz:'人',py:'ren2'},{hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'吃',py:'chi1'},{hz:'晚',py:'wan3'},{hz:'餐',py:'can1'},{hz:'，',py:''},
-  {hz:'聊',py:'liao2'},{hz:'天',py:'tian1'},{hz:'說',py:'shuo1'},{hz:'笑',py:'xiao4'},{hz:'，',py:''},
-  {hz:'非',py:'fei1'},{hz:'常',py:'chang2'},{hz:'快',py:'kuai4'},{hz:'樂',py:'le4'},{hz:'。',py:''}
-];
-const passageChars = passageData.filter(c=>c.py); // 排除標點,共約100字
-
-levels.push({
-  id:5, title:'短文打字', desc:'約100字情境短文,依順序打出完整拼音', badge:'STEP 05', ordered:true,
-  build(){
-    return passageChars.map((c,i)=>({
-      prompt:c.hz, hint:'依短文順序打出這個字的完整拼音(含聲調數字)', answer:c.py, speak:c.hz, passageIndex:i
-    }));
+/* 情境短文主題(每篇約60~100字)— 依序打字練習用 */
+const passageThemes = [
+  {
+    id:5, title:'日常生活', badge:'STEP 05', diff:'basic', diffLabel:'基礎',
+    desc:'約80字家庭日常短文,依順序打出完整拼音',
+    data:[
+      {hz:'我',py:'wo3'},{hz:'家',py:'jia1'},{hz:'有',py:'you3'},{hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},
+      {hz:'、',py:''},{hz:'媽',py:'ma1'},{hz:'媽',py:'ma1'},{hz:'、',py:''},{hz:'哥',py:'ge1'},{hz:'哥',py:'ge1'},
+      {hz:'和',py:'he2'},{hz:'我',py:'wo3'},{hz:'，',py:''},{hz:'一',py:'yi1'},{hz:'共',py:'gong4'},{hz:'四',py:'si4'},
+      {hz:'個',py:'ge4'},{hz:'人',py:'ren2'},{hz:'。',py:''},
+      {hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},{hz:'每',py:'mei3'},{hz:'天',py:'tian1'},{hz:'早',py:'zao3'},{hz:'上',py:'shang4'},
+      {hz:'去',py:'qu4'},{hz:'上',py:'shang4'},{hz:'班',py:'ban1'},{hz:'，',py:''},
+      {hz:'媽',py:'ma1'},{hz:'媽',py:'ma1'},{hz:'在',py:'zai4'},{hz:'家',py:'jia1'},{hz:'煮',py:'zhu3'},{hz:'飯',py:'fan4'},{hz:'，',py:''},
+      {hz:'哥',py:'ge1'},{hz:'哥',py:'ge1'},{hz:'去',py:'qu4'},{hz:'學',py:'xue2'},{hz:'校',py:'xiao4'},{hz:'上',py:'shang4'},{hz:'課',py:'ke4'},{hz:'，',py:''},
+      {hz:'我',py:'wo3'},{hz:'也',py:'ye3'},{hz:'是',py:'shi4'},{hz:'學',py:'xue2'},{hz:'生',py:'sheng1'},{hz:'，',py:''},
+      {hz:'喜',py:'xi3'},{hz:'歡',py:'huan1'},{hz:'看',py:'kan4'},{hz:'書',py:'shu1'},{hz:'和',py:'he2'},{hz:'運',py:'yun4'},{hz:'動',py:'dong4'},{hz:'。',py:''},
+      {hz:'星',py:'xing1'},{hz:'期',py:'qi1'},{hz:'六',py:'liu4'},{hz:'，',py:''},
+      {hz:'我',py:'wo3'},{hz:'們',py:'men5'},{hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'去',py:'qu4'},{hz:'公',py:'gong1'},{hz:'園',py:'yuan2'},{hz:'散',py:'san4'},{hz:'步',py:'bu4'},{hz:'，',py:''},
+      {hz:'天',py:'tian1'},{hz:'氣',py:'qi4'},{hz:'很',py:'hen3'},{hz:'好',py:'hao3'},{hz:'，',py:''},
+      {hz:'大',py:'da4'},{hz:'家',py:'jia1'},{hz:'都',py:'dou1'},{hz:'很',py:'hen3'},{hz:'開',py:'kai1'},{hz:'心',py:'xin1'},{hz:'。',py:''},
+      {hz:'晚',py:'wan3'},{hz:'上',py:'shang4'},{hz:'全',py:'quan2'},{hz:'家',py:'jia1'},{hz:'人',py:'ren2'},{hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'吃',py:'chi1'},{hz:'晚',py:'wan3'},{hz:'餐',py:'can1'},{hz:'，',py:''},
+      {hz:'聊',py:'liao2'},{hz:'天',py:'tian1'},{hz:'說',py:'shuo1'},{hz:'笑',py:'xiao4'},{hz:'，',py:''},
+      {hz:'非',py:'fei1'},{hz:'常',py:'chang2'},{hz:'快',py:'kuai4'},{hz:'樂',py:'le4'},{hz:'。',py:''}
+    ]
+  },
+  {
+    id:6, title:'節日:中秋', badge:'STEP 06', diff:'basic', diffLabel:'基礎',
+    desc:'約80字中秋節短文,依順序打出完整拼音',
+    data:[
+      {hz:'中',py:'zhong1'},{hz:'秋',py:'qiu1'},{hz:'節',py:'jie2'},{hz:'到',py:'dao4'},{hz:'了',py:'le5'},{hz:'，',py:''},
+      {hz:'晚',py:'wan3'},{hz:'上',py:'shang4'},{hz:'月',py:'yue4'},{hz:'亮',py:'liang4'},{hz:'又',py:'you4'},{hz:'圓',py:'yuan2'},{hz:'又',py:'you4'},{hz:'亮',py:'liang4'},{hz:'。',py:''},
+      {hz:'全',py:'quan2'},{hz:'家',py:'jia1'},{hz:'人',py:'ren2'},{hz:'坐',py:'zuo4'},{hz:'在',py:'zai4'},{hz:'院',py:'yuan4'},{hz:'子',py:'zi5'},{hz:'裡',py:'li3'},{hz:'，',py:''},
+      {hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'吃',py:'chi1'},{hz:'月',py:'yue4'},{hz:'餅',py:'bing3'},{hz:'、',py:''},{hz:'賞',py:'shang3'},{hz:'月',py:'yue4'},{hz:'、',py:''},{hz:'聊',py:'liao2'},{hz:'天',py:'tian1'},{hz:'。',py:''},
+      {hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},{hz:'說',py:'shuo1'},{hz:'中',py:'zhong1'},{hz:'秋',py:'qiu1'},{hz:'節',py:'jie2'},{hz:'是',py:'shi4'},{hz:'團',py:'tuan2'},{hz:'圓',py:'yuan2'},{hz:'的',py:'de5'},{hz:'節',py:'jie2'},{hz:'日',py:'ri4'},{hz:'，',py:''},
+      {hz:'大',py:'da4'},{hz:'家',py:'jia1'},{hz:'都',py:'dou1'},{hz:'要',py:'yao4'},{hz:'回',py:'hui2'},{hz:'家',py:'jia1'},{hz:'和',py:'he2'},{hz:'家',py:'jia1'},{hz:'人',py:'ren2'},{hz:'一',py:'yi1'},{hz:'起',py:'qi3'},{hz:'過',py:'guo4'},{hz:'。',py:''},
+      {hz:'奶',py:'nai3'},{hz:'奶',py:'nai3'},{hz:'還',py:'hai2'},{hz:'準',py:'zhun3'},{hz:'備',py:'bei4'},{hz:'了',py:'le5'},{hz:'柚',py:'you4'},{hz:'子',py:'zi5'},{hz:'和',py:'he2'},{hz:'茶',py:'cha2'},{hz:'，',py:''},
+      {hz:'大',py:'da4'},{hz:'家',py:'jia1'},{hz:'吃',py:'chi1'},{hz:'得',py:'de5'},{hz:'很',py:'hen3'},{hz:'開',py:'kai1'},{hz:'心',py:'xin1'},{hz:'，',py:''},
+      {hz:'笑',py:'xiao4'},{hz:'聲',py:'sheng1'},{hz:'傳',py:'chuan2'},{hz:'遍',py:'bian4'},{hz:'整',py:'zheng3'},{hz:'個',py:'ge4'},{hz:'院',py:'yuan4'},{hz:'子',py:'zi5'},{hz:'。',py:''}
+    ]
+  },
+  {
+    id:7, title:'美食', badge:'STEP 07', diff:'basic', diffLabel:'基礎',
+    desc:'約75字美食主題短文,依順序打出完整拼音',
+    data:[
+      {hz:'我',py:'wo3'},{hz:'最',py:'zui4'},{hz:'喜',py:'xi3'},{hz:'歡',py:'huan1'},{hz:'的',py:'de5'},{hz:'食',py:'shi2'},{hz:'物',py:'wu4'},{hz:'是',py:'shi4'},{hz:'水',py:'shui3'},{hz:'餃',py:'jiao3'},{hz:'和',py:'he2'},{hz:'牛',py:'niu2'},{hz:'肉',py:'rou4'},{hz:'麵',py:'mian4'},{hz:'。',py:''},
+      {hz:'媽',py:'ma1'},{hz:'媽',py:'ma1'},{hz:'包',py:'bao1'},{hz:'的',py:'de5'},{hz:'水',py:'shui3'},{hz:'餃',py:'jiao3'},{hz:'又',py:'you4'},{hz:'香',py:'xiang1'},{hz:'又',py:'you4'},{hz:'好',py:'hao3'},{hz:'吃',py:'chi1'},{hz:'，',py:''},
+      {hz:'裡',py:'li3'},{hz:'面',py:'mian4'},{hz:'有',py:'you3'},{hz:'高',py:'gao1'},{hz:'麗',py:'li4'},{hz:'菜',py:'cai4'},{hz:'和',py:'he2'},{hz:'豬',py:'zhu1'},{hz:'肉',py:'rou4'},{hz:'，',py:''},
+      {hz:'沾',py:'zhan1'},{hz:'點',py:'dian3'},{hz:'醋',py:'cu4'},{hz:'和',py:'he2'},{hz:'醬',py:'jiang4'},{hz:'油',py:'you2'},{hz:'，',py:''},
+      {hz:'味',py:'wei4'},{hz:'道',py:'dao4'},{hz:'特',py:'te4'},{hz:'別',py:'bie2'},{hz:'棒',py:'bang4'},{hz:'。',py:''},
+      {hz:'牛',py:'niu2'},{hz:'肉',py:'rou4'},{hz:'麵',py:'mian4'},{hz:'的',py:'de5'},{hz:'湯',py:'tang1'},{hz:'頭',py:'tou2'},{hz:'很',py:'hen3'},{hz:'濃',py:'nong2'},{hz:'，',py:''},
+      {hz:'麵',py:'mian4'},{hz:'條',py:'tiao2'},{hz:'又',py:'you4'},{hz:'滑',py:'hua2'},{hz:'又',py:'you4'},{hz:'有',py:'you3'},{hz:'嚼',py:'jiao2'},{hz:'勁',py:'jin4'},{hz:'，',py:''},
+      {hz:'吃',py:'chi1'},{hz:'完',py:'wan2'},{hz:'整',py:'zheng3'},{hz:'碗',py:'wan3'},{hz:'湯',py:'tang1'},{hz:'，',py:''},
+      {hz:'肚',py:'du4'},{hz:'子',py:'zi5'},{hz:'暖',py:'nuan3'},{hz:'暖',py:'nuan3'},{hz:'的',py:'de5'},{hz:'，',py:''},
+      {hz:'非',py:'fei1'},{hz:'常',py:'chang2'},{hz:'滿',py:'man3'},{hz:'足',py:'zu2'},{hz:'。',py:''}
+    ]
+  },
+  {
+    id:8, title:'動物', badge:'STEP 08', diff:'basic', diffLabel:'基礎',
+    desc:'約94字動物園主題短文,依順序打出完整拼音',
+    data:[
+      {hz:'動',py:'dong4'},{hz:'物',py:'wu4'},{hz:'園',py:'yuan2'},{hz:'裡',py:'li3'},{hz:'有',py:'you3'},{hz:'各',py:'ge4'},{hz:'種',py:'zhong3'},{hz:'可',py:'ke3'},{hz:'愛',py:'ai4'},{hz:'的',py:'de5'},{hz:'動',py:'dong4'},{hz:'物',py:'wu4'},{hz:'。',py:''},
+      {hz:'大',py:'da4'},{hz:'象',py:'xiang4'},{hz:'的',py:'de5'},{hz:'鼻',py:'bi2'},{hz:'子',py:'zi5'},{hz:'長',py:'chang2'},{hz:'長',py:'chang2'},{hz:'的',py:'de5'},{hz:'，',py:''},
+      {hz:'可',py:'ke3'},{hz:'以',py:'yi3'},{hz:'捲',py:'juan3'},{hz:'起',py:'qi3'},{hz:'食',py:'shi2'},{hz:'物',py:'wu4'},{hz:'送',py:'song4'},{hz:'進',py:'jin4'},{hz:'嘴',py:'zui3'},{hz:'裡',py:'li3'},{hz:'。',py:''},
+      {hz:'長',py:'chang2'},{hz:'頸',py:'jing3'},{hz:'鹿',py:'lu4'},{hz:'的',py:'de5'},{hz:'脖',py:'bo2'},{hz:'子',py:'zi5'},{hz:'很',py:'hen3'},{hz:'長',py:'chang2'},{hz:'，',py:''},
+      {hz:'能',py:'neng2'},{hz:'吃',py:'chi1'},{hz:'到',py:'dao4'},{hz:'樹',py:'shu4'},{hz:'頂',py:'ding3'},{hz:'的',py:'de5'},{hz:'葉',py:'ye4'},{hz:'子',py:'zi5'},{hz:'。',py:''},
+      {hz:'貓',py:'mao1'},{hz:'熊',py:'xiong2'},{hz:'最',py:'zui4'},{hz:'受',py:'shou4'},{hz:'歡',py:'huan1'},{hz:'迎',py:'ying2'},{hz:'，',py:''},
+      {hz:'牠',py:'ta1'},{hz:'們',py:'men5'},{hz:'喜',py:'xi3'},{hz:'歡',py:'huan1'},{hz:'抱',py:'bao4'},{hz:'著',py:'zhe5'},{hz:'竹',py:'zhu2'},{hz:'子',py:'zi5'},{hz:'慢',py:'man4'},{hz:'慢',py:'man4'},{hz:'吃',py:'chi1'},{hz:'，',py:''},
+      {hz:'樣',py:'yang4'},{hz:'子',py:'zi5'},{hz:'非',py:'fei1'},{hz:'常',py:'chang2'},{hz:'討',py:'tao3'},{hz:'喜',py:'xi3'},{hz:'。',py:''},
+      {hz:'猴',py:'hou2'},{hz:'子',py:'zi5'},{hz:'在',py:'zai4'},{hz:'樹',py:'shu4'},{hz:'上',py:'shang4'},{hz:'爬',py:'pa2'},{hz:'來',py:'lai2'},{hz:'爬',py:'pa2'},{hz:'去',py:'qu4'},{hz:'，',py:''},
+      {hz:'靈',py:'ling2'},{hz:'活',py:'huo2'},{hz:'又',py:'you4'},{hz:'調',py:'tiao2'},{hz:'皮',py:'pi2'},{hz:'，',py:''},
+      {hz:'吸',py:'xi1'},{hz:'引',py:'yin3'},{hz:'了',py:'le5'},{hz:'很',py:'hen3'},{hz:'多',py:'duo1'},{hz:'小',py:'xiao3'},{hz:'朋',py:'peng2'},{hz:'友',py:'you3'},{hz:'圍',py:'wei2'},{hz:'觀',py:'guan1'},{hz:'拍',py:'pai1'},{hz:'照',py:'zhao4'},{hz:'。',py:''}
+    ]
+  },
+  {
+    id:9, title:'進階挑戰:多音字', badge:'STEP 09', diff:'hard', diffLabel:'進階',
+    desc:'約57字,同一個字在不同詞裡讀音不同,考驗聲調變化的掌握',
+    data:[
+      {hz:'他',py:'ta1'},
+      {hz:'覺',py:'jue2', note:'「覺」在這裡讀 jué(覺得);「睡覺」的「覺」則讀 jiào。'},
+      {hz:'得',py:'de5', note:'「得」當助詞讀輕聲 de;「得到」讀 dé;「得(děi)走了」表示必須。'},
+      {hz:'這',py:'zhe4'},{hz:'條',py:'tiao2'},{hz:'路',py:'lu4'},{hz:'很',py:'hen3'},
+      {hz:'長',py:'chang2', note:'形容長度的「長」讀 cháng;下一句「長大」的「長」讀 zhǎng。'},
+      {hz:'，',py:''},
+      {hz:'長',py:'zhang3', note:'「長大」的「長」讀 zhǎng,和前面表示長度的 cháng 不同。'},
+      {hz:'大',py:'da4'},{hz:'以',py:'yi3'},{hz:'後',py:'hou4'},{hz:'想',py:'xiang3'},{hz:'當',py:'dang1'},{hz:'老',py:'lao3'},{hz:'師',py:'shi1'},
+      {hz:'教',py:'jiao1', note:'當動詞「教書」讀 jiāo;當名詞「教育」讀 jiào。'},
+      {hz:'書',py:'shu1'},{hz:'。',py:''},
+      {hz:'妹',py:'mei4'},{hz:'妹',py:'mei4'},{hz:'放',py:'fang4'},{hz:'假',py:'jia4'},{hz:'在',py:'zai4'},{hz:'家',py:'jia1'},{hz:'看',py:'kan4'},{hz:'書',py:'shu1'},{hz:'，',py:''},
+      {hz:'看',py:'kan4'},{hz:'得',py:'de5'},{hz:'很',py:'hen3'},{hz:'認',py:'ren4'},{hz:'真',py:'zhen1'},{hz:'，',py:''},
+      {hz:'爸',py:'ba4'},{hz:'爸',py:'ba4'},
+      {hz:'還',py:'hai2', note:'表示「仍然」讀 hái;表示「歸還」的動作讀 huán。'},
+      {hz:'說',py:'shuo1'},{hz:'要',py:'yao4'},{hz:'學',py:'xue2'},{hz:'更',py:'geng4'},{hz:'多',py:'duo1'},{hz:'知',py:'zhi1'},{hz:'識',py:'shi4'},{hz:'。',py:''},
+      {hz:'奶',py:'nai3'},{hz:'奶',py:'nai3'},
+      {hz:'都',py:'dou1', note:'表示「全部」讀 dōu;當地名如「首都」讀 dū。'},
+      {hz:'覺',py:'jue2'},{hz:'得',py:'de5'},{hz:'孩',py:'hai2'},{hz:'子',py:'zi5'},{hz:'們',py:'men5'},{hz:'進',py:'jin4'},{hz:'步',py:'bu4'},{hz:'很',py:'hen3'},{hz:'多',py:'duo1'},{hz:'，',py:''},
+      {hz:'非',py:'fei1'},{hz:'常',py:'chang2'},{hz:'開',py:'kai1'},{hz:'心',py:'xin1'},{hz:'。',py:''}
+    ]
   }
+];
+
+passageThemes.forEach(theme=>{
+  const chars = theme.data.filter(c=>c.py);
+  levels.push({
+    id:theme.id, title:theme.title, desc:theme.desc, badge:theme.badge,
+    diff:theme.diff, diffLabel:theme.diffLabel, ordered:true, passageChars:chars,
+    build(){
+      return chars.map((c,i)=>({
+        prompt:c.hz,
+        hint: c.note || '依短文順序打出這個字的完整拼音(含聲調數字)',
+        answer:c.py, speak:c.hz, passageIndex:i, autoHint: !!c.note
+      }));
+    }
+  });
 });
 
 let curLevel = null, queue = [], qIndex = 0, score=0, streak=0, total=0, hintOn=false;
+let isChallenge = false, timeLeft = 60, timerInt = null;
+let leaderboard = [];
 const passageBox = document.getElementById('passageBox');
 
 const levelRow = document.getElementById('levelRow');
@@ -586,7 +763,8 @@ levels.forEach(lv=>{
   const c = document.createElement('div');
   c.className = 'level-card';
   c.id = 'lvl'+lv.id;
-  c.innerHTML = `<div class="level-num">${lv.badge}</div><div class="level-title">${lv.title}</div><div class="level-desc">${lv.desc}</div>`;
+  const tag = lv.diffLabel ? `<span class="diff-tag ${lv.diff==='hard'?'hard':'basic'}">${lv.diffLabel}</span>` : '';
+  c.innerHTML = `<div class="level-num">${lv.badge}</div><div class="level-title">${lv.title}</div><div class="level-desc">${lv.desc}</div>${tag}`;
   c.addEventListener('click', ()=>startLevel(lv));
   levelRow.appendChild(c);
 });
@@ -596,10 +774,26 @@ const promptMain = document.getElementById('promptMain');
 const promptHint = document.getElementById('promptHint');
 const typeFeedback = document.getElementById('typeFeedback');
 const progressFill = document.getElementById('progressFill');
+const btnChallenge = document.getElementById('btnChallenge');
+const timerPill = document.getElementById('timerPill');
+const timerNum = document.getElementById('timerNum');
+const resultPanel = document.getElementById('resultPanel');
+const resultSummary = document.getElementById('resultSummary');
+const nameInput = document.getElementById('nameInput');
 
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
 
+function stopChallengeUI(){
+  clearInterval(timerInt);
+  isChallenge = false;
+  timerPill.classList.remove('show');
+  btnChallenge.disabled = false;
+  btnChallenge.textContent = '⏱ 開始 60 秒計時挑戰';
+  resultPanel.classList.remove('show');
+}
+
 function startLevel(lv){
+  stopChallengeUI();
   curLevel = lv;
   document.querySelectorAll('.level-card').forEach(c=>c.classList.remove('active'));
   document.getElementById('lvl'+lv.id).classList.add('active');
@@ -614,9 +808,69 @@ function startLevel(lv){
   showQuestion();
 }
 
+function startChallenge(){
+  const lv = curLevel || levels.find(l=>l.id===3);
+  clearInterval(timerInt);
+  curLevel = lv;
+  document.querySelectorAll('.level-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('lvl'+lv.id).classList.add('active');
+  queue = lv.ordered ? lv.build() : shuffle(lv.build());
+  qIndex = 0; score = 0; streak = 0; total = 0; hintOn = false;
+  updateStats();
+  resultPanel.classList.remove('show');
+  if(lv.ordered) renderPassageBox();
+  else{ passageBox.classList.remove('show'); passageBox.innerHTML=''; }
+  isChallenge = true; timeLeft = 60;
+  timerPill.classList.add('show');
+  timerNum.textContent = timeLeft;
+  btnChallenge.disabled = true;
+  btnChallenge.textContent = '⏱ 挑戰進行中…';
+  typeInput.disabled = false;
+  typeInput.focus();
+  showQuestion();
+  timerInt = setInterval(()=>{
+    timeLeft--;
+    timerNum.textContent = timeLeft;
+    if(timeLeft <= 0){ clearInterval(timerInt); endChallenge(); }
+  }, 1000);
+}
+
+function endChallenge(){
+  isChallenge = false;
+  typeInput.disabled = true;
+  timerPill.classList.remove('show');
+  btnChallenge.disabled = false;
+  btnChallenge.textContent = '⏱ 開始 60 秒計時挑戰';
+  const acc = total ? Math.round(score/total*100) : 0;
+  resultSummary.innerHTML = `你在 60 秒內答對了 <strong>${score}</strong> 題,正確率 ${acc}%。輸入名字即可加入排行榜!`;
+  resultPanel.classList.add('show');
+  nameInput.value = '';
+  nameInput.focus();
+}
+
+function submitScore(){
+  const name = nameInput.value.trim() || '匿名玩家';
+  leaderboard.push({ name, score, acc: total ? Math.round(score/total*100) : 0, level: curLevel ? curLevel.title : '' });
+  leaderboard.sort((a,b)=> b.score - a.score || b.acc - a.acc);
+  leaderboard = leaderboard.slice(0,10);
+  renderLeaderboard();
+  resultPanel.classList.remove('show');
+}
+
+function renderLeaderboard(){
+  const list = document.getElementById('boardList');
+  const empty = document.getElementById('boardEmpty');
+  if(!leaderboard.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = leaderboard.map(e=>
+    `<li><span class="board-name">${e.name}<br><span style="color:var(--ink-soft); font-weight:400; font-size:12px;">${e.level}</span></span><span class="board-score">${e.score} 題 · ${e.acc}%</span></li>`
+  ).join('');
+}
+renderLeaderboard();
+
 function renderPassageBox(){
   passageBox.classList.add('show');
-  passageBox.innerHTML = passageChars.map((c,i)=>`<span data-i="${i}">${c.hz}</span>`).join('');
+  passageBox.innerHTML = curLevel.passageChars.map((c,i)=>`<span data-i="${i}">${c.hz}</span>`).join('');
 }
 
 function updatePassageHighlight(){
@@ -632,8 +886,9 @@ function updatePassageHighlight(){
 
 function showQuestion(){
   if(qIndex >= queue.length){
-    if(curLevel.ordered){
+    if(curLevel.ordered && !isChallenge){
       promptMain.textContent = '🎉 短文完成!';
+      promptMain.style.display = '';
       promptHint.textContent = '再打一次可以繼續練習,或切換其他關卡';
       promptHint.classList.add('show');
       typeInput.value=''; typeInput.disabled = true;
@@ -641,7 +896,8 @@ function showQuestion(){
       updatePassageHighlight();
       return;
     }
-    queue = shuffle(curLevel.build()); qIndex = 0;
+    queue = curLevel.ordered ? curLevel.build() : shuffle(curLevel.build());
+    qIndex = 0;
   }
   typeInput.disabled = false;
   const q = queue[qIndex];
@@ -650,8 +906,14 @@ function showQuestion(){
   promptHint.textContent = '';
   promptHint.classList.remove('show');
   hintOn = false;
+  if(q.autoHint){
+    promptHint.textContent = '💡 ' + q.hint;
+    promptHint.classList.add('show');
+    hintOn = true;
+  }
   typeInput.value = '';
   typeInput.classList.remove('correct','wrong');
+  imeWarn.classList.remove('show');
   typeFeedback.textContent = '';
   typeFeedback.className = 'feedback';
   progressFill.style.width = ((qIndex)/queue.length*100)+'%';
@@ -663,7 +925,7 @@ function speakCurrent(){ if(queue[qIndex]) speak(queue[qIndex].speak); }
 function toggleHint(){
   hintOn = !hintOn;
   const q = queue[qIndex];
-  promptHint.textContent = hintOn ? q.hint : '';
+  promptHint.textContent = hintOn ? (q.autoHint ? '💡 '+q.hint : q.hint) : '';
   promptHint.classList.toggle('show', hintOn);
 }
 function skipQuestion(){
@@ -676,9 +938,23 @@ function skipQuestion(){
 
 function normalize(s){ return s.trim().toLowerCase().replace(/ü/g,'v'); }
 
+const imeWarn = document.getElementById('imeWarn');
+const CJK_REGEX = /[\u4e00-\u9fff\u3400-\u4dbf]/;
+typeInput.addEventListener('input', ()=>{
+  if(CJK_REGEX.test(typeInput.value)){
+    imeWarn.classList.add('show');
+  }else{
+    imeWarn.classList.remove('show');
+  }
+});
+
 typeInput.addEventListener('keydown', (e)=>{
   if(e.key !== 'Enter' || !curLevel) return;
   const q = queue[qIndex];
+  if(CJK_REGEX.test(typeInput.value)){
+    imeWarn.classList.add('show');
+    return; // 偵測到中文,先不判斷對錯,等使用者切換輸入法重打
+  }
   const given = normalize(typeInput.value);
   const answer = normalize(q.answer);
   const isCorrect = given === answer || (q.loose && given.replace(/5/g,'') === answer.replace(/5/g,''));
