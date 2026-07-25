@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拼音學堂 · 青花譜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f7f6;
+    --paper-dim:#e8eeec;
+    --porcelain:#ffffff;
+    --cobalt:#1f4e8c;
+    --cobalt-deep:#132f57;
+    --cobalt-soft:#5b83b5;
+    --ink:#1c2430;
+    --ink-soft:#5a6472;
+    --seal:#b23a2e;
+    --gold:#b8863b;
+    --line:#d7e1e0;
+    --good:#3f8f5f;
+    --bad:#b23a2e;
+    --radius:14px;
+    --shadow: 0 10px 30px -14px rgba(19,47,87,.25);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(31,78,140,.06), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(178,58,46,.05), transparent 45%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans TC", sans-serif;
+    line-height:1.6;
+  }
+  h1,h2,h3,.disp{font-family:"Noto Serif TC", serif;}
+  ::selection{ background: var(--cobalt-soft); color:#fff; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(244,247,246,.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:1080px; margin:0 auto; padding:14px 22px;
+    display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; margin-right:auto; }
+  .brand-mark{
+    width:34px;height:34px;border-radius:50%;
+    background: conic-gradient(from 220deg, var(--cobalt), var(--cobalt-soft), var(--gold), var(--cobalt));
+    display:grid;place-items:center; color:#fff; font-family:"Noto Serif TC",serif; font-weight:900; font-size:16px;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.5);
+  }
+  .brand-text{ font-family:"Noto Serif TC",serif; font-weight:700; font-size:19px; color:var(--cobalt-deep); letter-spacing:.02em;}
+  .brand-text small{ display:block; font-family:"Noto Sans TC",sans-serif; font-weight:400; font-size:11px; color:var(--ink-soft); letter-spacing:.15em;}
+  nav{ display:flex; gap:4px; flex-wrap:wrap; }
+  nav button{
+    border:none; background:transparent; cursor:pointer;
+    font-family:"Noto Sans TC",sans-serif; font-size:14px; font-weight:500;
+    color:var(--ink-soft); padding:8px 14px; border-radius:999px; transition:.2s;
+  }
+  nav button:hover{ background:var(--paper-dim); color:var(--ink); }
+  nav button.active{ background:var(--cobalt); color:#fff; }
+
+  main{ max-width:1080px; margin:0 auto; padding:36px 22px 90px; }
+  section{ display:none; animation:fade .35s ease; }
+  section.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  .hero{
+    position:relative;
+    padding:52px 40px;
+    border-radius:24px;
+    background: linear-gradient(155deg, var(--cobalt-deep) 0%, var(--cobalt) 55%, var(--cobalt-soft) 100%);
+    color:#fff; overflow:hidden; margin-bottom:34px;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 85% 15%, rgba(255,255,255,.14) 0, transparent 40%),
+      repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .hero-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    background:rgba(255,255,255,.14); padding:6px 14px; border-radius:999px; margin-bottom:18px;
+  }
+  .hero-tag i{ width:6px;height:6px;border-radius:50%;background:var(--gold); }
+  .hero h1{ font-size:44px; margin:0 0 10px; font-weight:900; letter-spacing:.02em;}
+  .hero h1 em{ font-style:normal; color:#f3d9a8; }
+  .hero p{ max-width:560px; color:rgba(255,255,255,.86); font-size:15.5px; margin:0 0 26px;}
+  .hero-cta{ display:flex; gap:12px; flex-wrap:wrap; position:relative; z-index:1;}
+  .btn{
+    border:none; cursor:pointer; font-family:"Noto Sans TC",sans-serif; font-weight:700; font-size:14.5px;
+    padding:12px 22px; border-radius:999px; transition:.2s; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{ background:#fff; color:var(--cobalt-deep); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 18px -6px rgba(0,0,0,.35); }
+  .btn-ghost{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.4); }
+  .btn-ghost:hover{ background:rgba(255,255,255,.22); }
+
+  .structure-row{ display:flex; gap:14px; margin-top:30px; flex-wrap:wrap; position:relative; z-index:1;}
+  .struct-card{
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28);
+    border-radius:14px; padding:16px 20px; flex:1; min-width:140px;
+  }
+  .struct-card b{ display:block; font-family:"Noto Serif TC",serif; font-size:22px; color:#f3d9a8; margin-bottom:4px;}
+  .struct-card span{ font-size:12.5px; color:rgba(255,255,255,.75); }
+
+  .section-head{ margin-bottom:22px; }
+  .eyebrow{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--seal); font-weight:700; margin-bottom:6px;}
+  .section-head h2{ font-size:28px; margin:0 0 6px; color:var(--cobalt-deep); }
+  .section-head p{ color:var(--ink-soft); font-size:14.5px; max-width:640px; margin:0;}
+
+  .tile-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(108px,1fr)); gap:10px; margin-top:18px;}
+  .tile{
+    background:var(--porcelain); border:1px solid var(--line); border-radius:12px;
+    padding:14px 8px; text-align:center; cursor:pointer; transition:.18s;
+    position:relative;
+  }
+  .tile:hover{ border-color:var(--cobalt-soft); transform:translateY(-3px); box-shadow:var(--shadow); }
+  .tile .py{ font-family:"Noto Serif TC",serif; font-weight:700; font-size:19px; color:var(--cobalt); }
+  .tile .ex{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+  .tile .hz{ font-size:15px; color:var(--ink); }
+  .tile::after{
+    content:"🔊"; position:absolute; top:6px; right:8px; font-size:10px; opacity:.35;
+  }
+  .group-label{
+    font-size:12.5px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.12em;
+    margin:26px 0 4px; display:flex; align-items:center; gap:8px;
+  }
+  .group-label::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+  .tone-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:18px;}
+  .tone-card{
+    background:var(--porcelain); border:1px solid var(--line); border-radius:16px; padding:20px; text-align:center;
+    cursor:pointer; transition:.18s;
+  }
+  .tone-card:hover{ border-color:var(--cobalt-soft); box-shadow:var(--shadow); transform:translateY(-3px);}
+  .tone-num{ font-size:12px; color:var(--seal); font-weight:700; letter-spacing:.1em; }
+  .tone-glyph{ font-family:"Noto Serif TC",serif; font-size:40px; color:var(--cobalt-deep); margin:6px 0;}
+  .tone-curve{ width:70px; height:36px; margin:6px auto; }
+  .tone-name{ font-size:13.5px; color:var(--ink-soft); }
+  .tone-example{ font-size:13px; margin-top:8px; color:var(--ink); }
+
+  .card{
+    background:var(--porcelain); border:1px solid var(--line); border-radius:18px;
+    padding:26px; box-shadow:var(--shadow);
+  }
+
+  /* ---------- typing practice ---------- */
+  .level-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:18px 0 28px;}
+  .level-card{
+    background:var(--porcelain); border:2px solid var(--line); border-radius:16px; padding:18px 20px; cursor:pointer;
+    transition:.18s; position:relative;
+  }
+  .level-card:hover{ border-color:var(--cobalt-soft); transform:translateY(-3px); box-shadow:var(--shadow);}
+  .level-card.active{ border-color:var(--cobalt); background:linear-gradient(160deg,#eef4fb,var(--porcelain)); }
+  .level-num{ font-family:"Noto Serif TC",serif; font-size:13px; color:var(--gold); font-weight:700; }
+  .level-title{ font-size:16px; font-weight:700; color:var(--cobalt-deep); margin:4px 0 3px;}
+  .level-desc{ font-size:12.5px; color:var(--ink-soft); }
+
+  .type-stage{
+    background:var(--porcelain); border:1px solid var(--line); border-radius:22px; padding:40px; text-align:center;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .type-stage::before{
+    content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background: radial-gradient(circle at 100% 0%, rgba(31,78,140,.06), transparent 55%);
+  }
+  .stat-row{ display:flex; justify-content:center; gap:34px; margin-bottom:26px; font-family:"Noto Serif TC",serif;}
+  .stat{ text-align:center; }
+  .stat b{ display:block; font-size:24px; color:var(--cobalt-deep); }
+  .stat span{ font-size:11.5px; color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase;}
+
+  .prompt-hz{ font-size:64px; font-family:"Noto Serif TC",serif; color:var(--ink); margin-bottom:6px; min-height:80px;}
+  .prompt-hint{ font-size:14px; color:var(--ink-soft); margin-bottom:26px; min-height:20px; }
+  .prompt-hint.show{ color:var(--cobalt); }
+
+  .type-input-wrap{ display:flex; justify-content:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
+  #typeInput{
+    font-family:"Noto Serif TC",serif;
+    font-size:26px; text-align:center; padding:14px 18px; width:280px; max-width:80vw;
+    border:2px solid var(--line); border-radius:12px; outline:none; color:var(--cobalt-deep);
+    background:#fbfdfd; transition:.15s;
+  }
+  #typeInput:focus{ border-color:var(--cobalt); box-shadow:0 0 0 4px rgba(31,78,140,.12); }
+  #typeInput.correct{ border-color:var(--good); box-shadow:0 0 0 4px rgba(63,143,95,.15); }
+  #typeInput.wrong{ border-color:var(--bad); box-shadow:0 0 0 4px rgba(178,58,46,.15); animation:shake .3s; }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+
+  .feedback{ min-height:26px; font-size:15px; font-weight:700; margin-bottom:18px; }
+  .feedback.good{ color:var(--good); }
+  .feedback.bad{ color:var(--bad); }
+
+  .type-controls{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap;}
+  .icon-btn{
+    border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 18px; font-size:13px; cursor:pointer;
+    color:var(--ink-soft); transition:.15s; font-weight:600;
+  }
+  .icon-btn:hover{ border-color:var(--cobalt-soft); color:var(--cobalt); }
+
+  .progress-track{ height:6px; background:var(--paper-dim); border-radius:99px; overflow:hidden; margin-bottom:30px;}
+  .progress-fill{ height:100%; background:linear-gradient(90deg,var(--cobalt-soft),var(--cobalt)); width:0%; transition:.25s;}
+
+  .quiz-panel{ margin-top:20px;}
+  .quiz-q{ font-size:20px; margin-bottom:16px; }
+  .quiz-opts{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px;}
+  .quiz-opt{
+    padding:14px; border-radius:12px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:17px;
+    font-family:"Noto Serif TC",serif; transition:.15s;
+  }
+  .quiz-opt:hover{ border-color:var(--cobalt-soft); }
+  .quiz-opt.correct{ border-color:var(--good); background:#eef8f0; color:var(--good); }
+  .quiz-opt.wrong{ border-color:var(--bad); background:#fbeceb; color:var(--bad); }
+
+  footer{ text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:12.5px; }
+  footer .seal{ color:var(--seal); font-family:"Noto Serif TC",serif; }
+
+  @media (max-width:640px){
+    .hero{ padding:34px 22px;}
+    .hero h1{ font-size:32px; }
+    .prompt-hz{ font-size:46px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">拼</div>
+      <div class="brand-text">拼音學堂<small>QĪNG HUĀ CÍ · 青花譜</small></div>
+    </div>
+    <nav id="nav">
+      <button data-target="home" class="active">首頁</button>
+      <button data-target="initials">聲母</button>
+      <button data-target="finals">韻母</button>
+      <button data-target="tones">聲調</button>
+      <button data-target="typing">打字練習</button>
+      <button data-target="quiz">隨堂測驗</button>
+    </nav>
+  </div>
+</div>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="active">
+    <div class="hero">
+      <span class="hero-tag"><i></i>漢語拼音 · 從零開始</span>
+      <h1>把每個音<br><em>刻進手感</em>裡</h1>
+      <p>先認識「聲母、韻母、聲調」三個部件如何拼成一個字音,再透過循序漸進的打字練習,把耳朵聽到的音,變成手指打得出來的字。</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="goTo('initials')">開始認識聲母 →</button>
+        <button class="btn btn-ghost" onclick="goTo('typing')">直接進入打字練習</button>
+      </div>
+      <div class="structure-row">
+        <div class="struct-card"><b>聲母</b><span>音節開頭的輔音,如 b / p / m,共 23 個</span></div>
+        <div class="struct-card"><b>韻母</b><span>音節主體的元音組合,如 a / an / iang,共 24 個</span></div>
+        <div class="struct-card"><b>聲調</b><span>音高的變化,決定字義,共 4 聲 + 輕聲</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <div class="eyebrow">學習地圖</div>
+        <h2>建議的學習路徑</h2>
+        <p>拼音是「聽 → 認 → 拼 → 打」層層堆疊的技能,建議依序完成以下四步。</p>
+      </div>
+      <div class="level-row">
+        <div class="level-card" onclick="goTo('initials')">
+          <div class="level-num">STEP 01</div>
+          <div class="level-title">認識聲母表</div>
+          <div class="level-desc">點擊每個聲母,聆聽對應例字發音</div>
+        </div>
+        <div class="level-card" onclick="goTo('finals')">
+          <div class="level-num">STEP 02</div>
+          <div class="level-title">認識韻母表</div>
+          <div class="level-desc">單韻母、複韻母、鼻韻母一次看懂</div>
+        </div>
+        <div class="level-card" onclick="goTo('tones')">
+          <div class="level-num">STEP 03</div>
+          <div class="level-title">掌握四聲調值</div>
+          <div class="level-desc">看懂調型曲線,聽出音高變化</div>
+        </div>
+        <div class="level-card" onclick="goTo('typing')">
+          <div class="level-num">STEP 04</div>
+          <div class="level-title">打字練習關卡</div>
+          <div class="level-desc">從單一聲母打起,一路打到完整句子</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INITIALS -->
+  <section id="initials">
+    <div class="section-head">
+      <div class="eyebrow">聲母 Initials</div>
+      <h2>23 個聲母</h2>
+      <p>點擊每張卡片,聽聽例字的發音,感受聲母帶出的口型與氣流。</p>
+    </div>
+    <div id="initialsWrap"></div>
+  </section>
+
+  <!-- FINALS -->
+  <section id="finals">
+    <div class="section-head">
+      <div class="eyebrow">韻母 Finals</div>
+      <h2>24 個韻母</h2>
+      <p>韻母是音節的「主體」,分成單韻母、複韻母與鼻韻母三大類。</p>
+    </div>
+    <div id="finalsWrap"></div>
+  </section>
+
+  <!-- TONES -->
+  <section id="tones">
+    <div class="section-head">
+      <div class="eyebrow">聲調 Tones</div>
+      <h2>四聲 + 輕聲</h2>
+      <p>同一個音節,聲調不同,意思就完全不同。點擊卡片聆聽對比。</p>
+    </div>
+    <div class="tone-grid" id="toneGrid"></div>
+    <div class="card" style="margin-top:26px;">
+      <div class="group-label">四聲對比練習</div>
+      <p style="color:var(--ink-soft); font-size:14px;">聽聽看「媽 mā・麻 má・馬 mǎ・罵 mà」— 同一個韻母 a,四種調值,四個完全不同的字。</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+        <button class="icon-btn" onclick="speak('媽')">媽 mā (1聲)</button>
+        <button class="icon-btn" onclick="speak('麻')">麻 má (2聲)</button>
+        <button class="icon-btn" onclick="speak('馬')">馬 mǎ (3聲)</button>
+        <button class="icon-btn" onclick="speak('罵')">罵 mà (4聲)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPING -->
+  <section id="typing">
+    <div class="section-head">
+      <div class="eyebrow">打字練習 Typing Drill</div>
+      <h2>從基礎音開始,一步步打出完整拼音</h2>
+      <p>選擇一個關卡,系統會念出或顯示提示,請在輸入框打出對應的拼音(聲調請用數字 1-4 表示,例如 mā 請打 ma1)。</p>
+    </div>
+
+    <div class="level-row" id="levelRow"></div>
+
+    <div class="type-stage">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="stat-row">
+        <div class="stat"><b id="statScore">0</b><span>答對題數</span></div>
+        <div class="stat"><b id="statStreak">0</b><span>連續答對</span></div>
+        <div class="stat"><b id="statAcc">100%</b><span>正確率</span></div>
+      </div>
+
+      <div class="prompt-hz" id="promptMain">選擇上方關卡開始</div>
+      <div class="prompt-hint" id="promptHint"></div>
+
+      <div class="type-input-wrap">
+        <input id="typeInput" type="text" autocomplete="off" placeholder="在這裡打字…" disabled>
+      </div>
+      <div class="feedback" id="typeFeedback"></div>
+
+      <div class="type-controls">
+        <button class="icon-btn" id="btnSpeak" onclick="speakCurrent()">🔊 再聽一次</button>
+        <button class="icon-btn" id="btnHint" onclick="toggleHint()">💡 顯示提示</button>
+        <button class="icon-btn" id="btnSkip" onclick="skipQuestion()">⏭ 跳過</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz">
+    <div class="section-head">
+      <div class="eyebrow">隨堂測驗 Quick Quiz</div>
+      <h2>聽音辨調 · 選擇題</h2>
+      <p>系統會念出一個字,請從四個拼音選項中選出正確答案。</p>
+    </div>
+    <div class="card quiz-panel">
+      <div class="stat-row" style="margin-bottom:20px;">
+        <div class="stat"><b id="quizScore">0</b><span>答對</span></div>
+        <div class="stat"><b id="quizTotal">0</b><span>總題數</span></div>
+      </div>
+      <div style="text-align:center;">
+        <div class="prompt-hz" id="quizHz">按下方按鈕開始</div>
+        <div class="quiz-opts" id="quizOpts"></div>
+        <button class="btn btn-primary" style="margin-top:22px;" onclick="nextQuiz()">下一題 →</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="seal">拼</span> 拼音學堂 · 練習使用瀏覽器內建語音合成,發音品質依裝置語音引擎而異。
+  <div style="margin-top:6px; color:var(--ink-soft);">設計者:spppps@go.edu.tw</div>
+</footer>
+
+<script>
+/* ---------------- 資料 ---------------- */
+const initials = [
+  {py:'b',hz:'爸',w:'bà'},{py:'p',hz:'怕',w:'pà'},{py:'m',hz:'媽',w:'mā'},{py:'f',hz:'發',w:'fā'},
+  {py:'d',hz:'大',w:'dà'},{py:'t',hz:'他',w:'tā'},{py:'n',hz:'你',w:'nǐ'},{py:'l',hz:'來',w:'lái'},
+  {py:'g',hz:'哥',w:'gē'},{py:'k',hz:'可',w:'kě'},{py:'h',hz:'好',w:'hǎo'},
+  {py:'j',hz:'雞',w:'jī'},{py:'q',hz:'七',w:'qī'},{py:'x',hz:'西',w:'xī'},
+  {py:'zh',hz:'知',w:'zhī'},{py:'ch',hz:'吃',w:'chī'},{py:'sh',hz:'是',w:'shì'},{py:'r',hz:'人',w:'rén'},
+  {py:'z',hz:'字',w:'zì'},{py:'c',hz:'菜',w:'cài'},{py:'s',hz:'三',w:'sān'},
+  {py:'y',hz:'一',w:'yī'},{py:'w',hz:'我',w:'wǒ'}
+];
+
+const finals = {
+  '單韻母': [
+    {py:'a',hz:'啊',w:'ā'},{py:'o',hz:'喔',w:'ō'},{py:'e',hz:'鵝',w:'é'},
+    {py:'i',hz:'衣',w:'yī'},{py:'u',hz:'屋',w:'wū'},{py:'ü',hz:'魚',w:'yú'}
+  ],
+  '複韻母': [
+    {py:'ai',hz:'愛',w:'ài'},{py:'ei',hz:'誒',w:'éi'},{py:'ao',hz:'奧',w:'ào'},{py:'ou',hz:'歐',w:'ōu'},
+    {py:'ia',hz:'家',w:'jiā'},{py:'ie',hz:'謝',w:'xiè'},{py:'ua',hz:'瓜',w:'guā'},{py:'uo',hz:'我',w:'wǒ'},
+    {py:'üe',hz:'月',w:'yuè'},{py:'iao',hz:'小',w:'xiǎo'},{py:'iou',hz:'油',w:'yóu'},{py:'uai',hz:'外',w:'wài'},{py:'uei',hz:'為',w:'wèi'}
+  ],
+  '鼻韻母': [
+    {py:'an',hz:'安',w:'ān'},{py:'en',hz:'恩',w:'ēn'},{py:'in',hz:'因',w:'yīn'},{py:'un',hz:'雲',w:'yún'},{py:'ün',hz:'裙',w:'qún'},
+    {py:'ang',hz:'昂',w:'áng'},{py:'eng',hz:'冷',w:'lěng'},{py:'ing',hz:'鷹',w:'yīng'},{py:'ong',hz:'紅',w:'hóng'}
+  ]
+};
+
+const tones = [
+  {num:'第一聲',mark:'ˉ',glyph:'mā',name:'高平調 · 音高平穩不變',ex:'媽 mā(媽媽)',path:'M4,18 L66,18'},
+  {num:'第二聲',mark:'ˊ',glyph:'má',name:'上升調 · 由中往高上揚',ex:'麻 má(麻煩)',path:'M4,30 L66,6'},
+  {num:'第三聲',mark:'ˇ',glyph:'mǎ',name:'先降後升 · 像個V字',ex:'馬 mǎ(馬路)',path:'M4,10 Q35,34 66,10'},
+  {num:'第四聲',mark:'ˋ',glyph:'mà',name:'下降調 · 由高往低快速下降',ex:'罵 mà(罵人)',path:'M4,6 L66,30'},
+  {num:'輕聲',mark:'˙',glyph:'ma',name:'又輕又短 · 不特別標調',ex:'嗎 ma(疑問語氣)',path:'M4,20 L66,20'}
+];
+
+/* ---------------- 導覽 ---------------- */
+const sections = document.querySelectorAll('main section');
+const navBtns = document.querySelectorAll('#nav button');
+function goTo(id){
+  sections.forEach(s=>s.classList.toggle('active', s.id===id));
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.target===id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+navBtns.forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.target)));
+
+/* ---------------- 語音合成 ---------------- */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+/* ---------------- 聲母 / 韻母表 ---------------- */
+function renderTiles(container, items){
+  const wrap = document.createElement('div');
+  wrap.className = 'tile-grid';
+  items.forEach(it=>{
+    const t = document.createElement('div');
+    t.className = 'tile';
+    t.innerHTML = `<div class="py">${it.py}</div><div class="hz">${it.hz}</div><div class="ex">${it.w}</div>`;
+    t.addEventListener('click', ()=>speak(it.hz));
+    wrap.appendChild(t);
+  });
+  container.appendChild(wrap);
+}
+renderTiles(document.getElementById('initialsWrap'), initials);
+
+const finalsWrap = document.getElementById('finalsWrap');
+Object.keys(finals).forEach(group=>{
+  const label = document.createElement('div');
+  label.className = 'group-label';
+  label.textContent = group;
+  finalsWrap.appendChild(label);
+  renderTiles(finalsWrap, finals[group]);
+});
+
+/* ---------------- 聲調卡 ---------------- */
+const toneGrid = document.getElementById('toneGrid');
+tones.forEach(t=>{
+  const c = document.createElement('div');
+  c.className = 'tone-card';
+  c.innerHTML = `
+    <div class="tone-num">${t.num}</div>
+    <div class="tone-glyph">${t.glyph}</div>
+    <svg class="tone-curve" viewBox="0 0 70 40"><path d="${t.path}" stroke="#1f4e8c" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    <div class="tone-name">${t.name}</div>
+    <div class="tone-example">${t.ex}</div>`;
+  c.addEventListener('click', ()=>speak(t.ex.split(' ')[0]));
+  toneGrid.appendChild(c);
+});
+
+/* ---------------- 打字練習 ---------------- */
+const levels = [
+  {
+    id:1, title:'聲母打字', desc:'聽例字,打出聲母字母', badge:'STEP 01',
+    build(){ return initials.map(it=>({ prompt:it.hz, hint:`例字讀音提示:${it.w}`, answer:it.py, speak:it.hz })); }
+  },
+  {
+    id:2, title:'韻母打字', desc:'聽例字,打出韻母拼寫', badge:'STEP 02',
+    build(){ const all=[...finals['單韻母'],...finals['複韻母'],...finals['鼻韻母']];
+      return all.map(it=>({ prompt:it.hz, hint:`例字讀音提示:${it.w}`, answer:it.py, speak:it.hz })); }
+  },
+  {
+    id:3, title:'完整拼音', desc:'打出「聲母+韻母+聲調數字」,如 mā → ma1', badge:'STEP 03',
+    build(){
+      const words = [
+        {hz:'媽',py:'ma1'},{hz:'麻',py:'ma2'},{hz:'馬',py:'ma3'},{hz:'罵',py:'ma4'},
+        {hz:'八',py:'ba1'},{hz:'白',py:'bai2'},{hz:'跑',py:'pao3'},{hz:'貓',py:'mao1'},
+        {hz:'大',py:'da4'},{hz:'弟',py:'di4'},{hz:'哥',py:'ge1'},{hz:'口',py:'kou3'},
+        {hz:'花',py:'hua1'},{hz:'雞',py:'ji1'},{hz:'球',py:'qiu2'},{hz:'小',py:'xiao3'},
+        {hz:'書',py:'shu1'},{hz:'知',py:'zhi1'},{hz:'人',py:'ren2'},{hz:'字',py:'zi4'},
+        {hz:'我',py:'wo3'},{hz:'月',py:'yue4'},{hz:'風',py:'feng1'},{hz:'夢',py:'meng4'}
+      ];
+      return words.map(w=>({ prompt:w.hz, hint:'請輸入聲母+韻母+聲調數字(如 mā = ma1)', answer:w.py, speak:w.hz }));
+    }
+  },
+  {
+    id:4, title:'詞語 / 短句', desc:'挑戰多音節詞語與短句拼音', badge:'STEP 04',
+    build(){
+      const phrases = [
+        {hz:'你好',py:'ni3hao3'},{hz:'謝謝',py:'xie4xie5'},{hz:'老師',py:'lao3shi1'},
+        {hz:'學生',py:'xue2sheng5'},{hz:'早安',py:'zao3an1'},{hz:'晚安',py:'wan3an1'},
+        {hz:'我愛你',py:'wo3ai4ni3'},{hz:'謝謝你',py:'xie4xie5ni3'},{hz:'再見',py:'zai4jian4'}
+      ];
+      return phrases.map(p=>({ prompt:p.hz, hint:'詞語中每個字的拼音直接連寫,輕聲可標 5 或不標', answer:p.py, speak:p.hz, loose:true }));
+    }
+  }
+];
+
+let curLevel = null, queue = [], qIndex = 0, score=0, streak=0, total=0, hintOn=false;
+
+const levelRow = document.getElementById('levelRow');
+levels.forEach(lv=>{
+  const c = document.createElement('div');
+  c.className = 'level-card';
+  c.id = 'lvl'+lv.id;
+  c.innerHTML = `<div class="level-num">${lv.badge}</div><div class="level-title">${lv.title}</div><div class="level-desc">${lv.desc}</div>`;
+  c.addEventListener('click', ()=>startLevel(lv));
+  levelRow.appendChild(c);
+});
+
+const typeInput = document.getElementById('typeInput');
+const promptMain = document.getElementById('promptMain');
+const promptHint = document.getElementById('promptHint');
+const typeFeedback = document.getElementById('typeFeedback');
+const progressFill = document.getElementById('progressFill');
+
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
+
+function startLevel(lv){
+  curLevel = lv;
+  document.querySelectorAll('.level-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('lvl'+lv.id).classList.add('active');
+  queue = shuffle(lv.build());
+  qIndex = 0; score = 0; streak = 0; total = 0; hintOn = false;
+  updateStats();
+  typeInput.disabled = false;
+  typeInput.value = '';
+  typeInput.focus();
+  showQuestion();
+}
+
+function showQuestion(){
+  if(qIndex >= queue.length){ queue = shuffle(curLevel.build()); qIndex = 0; }
+  const q = queue[qIndex];
+  promptMain.textContent = q.prompt;
+  promptHint.textContent = '';
+  promptHint.classList.remove('show');
+  hintOn = false;
+  typeInput.value = '';
+  typeInput.classList.remove('correct','wrong');
+  typeFeedback.textContent = '';
+  typeFeedback.className = 'feedback';
+  progressFill.style.width = ((qIndex)/queue.length*100)+'%';
+  speak(q.speak);
+}
+
+function speakCurrent(){ if(queue[qIndex]) speak(queue[qIndex].speak); }
+function toggleHint(){
+  hintOn = !hintOn;
+  const q = queue[qIndex];
+  promptHint.textContent = hintOn ? q.hint : '';
+  promptHint.classList.toggle('show', hintOn);
+}
+function skipQuestion(){
+  total++;
+  streak = 0;
+  qIndex++;
+  updateStats();
+  showQuestion();
+}
+
+function normalize(s){ return s.trim().toLowerCase().replace(/ü/g,'v'); }
+
+typeInput.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Enter' || !curLevel) return;
+  const q = queue[qIndex];
+  const given = normalize(typeInput.value);
+  const answer = normalize(q.answer);
+  const isCorrect = given === answer || (q.loose && given.replace(/5/g,'') === answer.replace(/5/g,''));
+  total++;
+  if(isCorrect){
+    score++; streak++;
+    typeInput.classList.remove('wrong'); typeInput.classList.add('correct');
+    typeFeedback.textContent = '✓ 正確!'; typeFeedback.className = 'feedback good';
+  }else{
+    streak = 0;
+    typeInput.classList.remove('correct'); typeInput.classList.add('wrong');
+    typeFeedback.textContent = `✗ 正確答案是:${q.answer}`; typeFeedback.className = 'feedback bad';
+  }
+  updateStats();
+  qIndex++;
+  setTimeout(showQuestion, isCorrect ? 500 : 1200);
+});
+
+function updateStats(){
+  document.getElementById('statScore').textContent = score;
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statAcc').textContent = total ? Math.round(score/total*100)+'%' : '100%';
+}
+
+/* ---------------- 隨堂測驗 ---------------- */
+const quizBank = [
+  {hz:'媽',py:'mā'},{hz:'麻',py:'má'},{hz:'馬',py:'mǎ'},{hz:'罵',py:'mà'},
+  {hz:'八',py:'bā'},{hz:'白',py:'bái'},{hz:'跑',py:'pǎo'},{hz:'貓',py:'māo'},
+  {hz:'花',py:'huā'},{hz:'雞',py:'jī'},{hz:'球',py:'qiú'},{hz:'小',py:'xiǎo'},
+  {hz:'書',py:'shū'},{hz:'人',py:'rén'},{hz:'我',py:'wǒ'},{hz:'月',py:'yuè'}
+];
+let quizScore=0, quizTotal=0, curQuiz=null;
+
+function nextQuiz(){
+  curQuiz = quizBank[Math.floor(Math.random()*quizBank.length)];
+  document.getElementById('quizHz').textContent = curQuiz.hz;
+  speak(curQuiz.hz);
+  const opts = new Set([curQuiz.py]);
+  while(opts.size < 4){
+    opts.add(quizBank[Math.floor(Math.random()*quizBank.length)].py);
+  }
+  const arr = shuffle([...opts]);
+  const optWrap = document.getElementById('quizOpts');
+  optWrap.innerHTML = '';
+  arr.forEach(opt=>{
+    const b = document.createElement('div');
+    b.className = 'quiz-opt';
+    b.textContent = opt;
+    b.addEventListener('click', ()=>{
+      quizTotal++;
+      document.querySelectorAll('.quiz-opt').forEach(o=>{
+        if(o.textContent === curQuiz.py) o.classList.add('correct');
+      });
+      if(opt === curQuiz.py){ quizScore++; }
+      else { b.classList.add('wrong'); }
+      document.getElementById('quizScore').textContent = quizScore;
+      document.getElementById('quizTotal').textContent = quizTotal;
+    });
+    optWrap.appendChild(b);
+  });
+}
+</script>
+</body>
+</html>
